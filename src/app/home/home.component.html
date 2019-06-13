@@ -1,0 +1,59 @@
+<!-- 
+<select (change)="changeCodeLanguage($event)">
+  <option value="clike">C</option>
+  <option value="clike">Java</option>
+  <option>HTML</option>
+</select> -->
+
+<div class="container">
+  <div class="row mt-3" style="height: 500px;">
+    <div class="col-xs-12 col-md-12">
+      <ngx-codemirror #codeBox id="codeBox" [(ngModel)]="content" [options]="options"></ngx-codemirror>
+    </div>
+  </div>
+  <div class="row mt-4 ml-1">
+    <div class="col-xs-3 col-md-3">
+      <mat-form-field class="w-100">
+        <mat-select placeholder="Select A Language" (selectionChange)="changeCodeLanguage($event)">
+            <ng-template ngFor let-l [ngForOf]="languageList">
+                <mat-option [value]=l._id>{{l.title}}</mat-option>
+            </ng-template>
+          <!-- <mat-option *ngFor="let l of languageList" [value]=l._id>{{l.title}}</mat-option> -->
+        </mat-select>
+      </mat-form-field>
+    </div>
+    <div class="col-xs-2 col-md-2">
+      <button mat-raised-button class="btn btn-success w-100 mt-2" (click)="onRun()" [disabled]="isRunning || content.length == 0 || !currentLanguage">Run</button>
+    </div>
+    <div class="col-xs-6 col-sm-6 offset-md-1 mt-3 mt-md-0">
+      <!-- <div>
+          <mat-form-field class="" style="width: 80% !important">
+              <input matInput readonly="true" type="text" [value]="shareableUrl">
+          </mat-form-field>
+          <div class="float-right mt-2" style="width: 10% !important; font-size: 20px;" data-toggle="tooltip" data-placement="top" title="Copy to Clipboard" (click)="doCopy()"><fa-icon [icon]="fontAwesome.faCopy"></fa-icon></div>
+          <div class="float-right mt-2" style="width: 10% !important; font-size: 20px;" data-toggle="tooltip" data-placement="top" title="Share to Social Sites" (click)="openShareBottomSheet()"><fa-icon [icon]="fontAwesome.faShareSquare"></fa-icon></div>
+      </div> -->
+      <button mat-raised-button class="btn btn-primary w-100 mt-2">Save to Share</button>
+    </div>
+  </div>
+  <div class="row mt-2">
+      <div class="col-xs-12 col-md-6 offset-md-6">
+        <div class="status-line" [hidden] = "statusProperties.hidden">
+          <div class="d-inline-block" [ngClass]="statusProperties.status.class">{{statusProperties.status.text}}</div>
+          <div class="text-secondary d-inline-block ml-2" [hidden]="statusProperties.time.hidden">{{statusProperties.time.text}}</div>
+        </div>
+      </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12 col-md-6">
+      <mat-form-field class="w-100"> 
+        <textarea matInput placeholder="stdin" style="min-height: 150px; resize: none" [(ngModel)]="stdinText"></textarea>
+      </mat-form-field>
+    </div>
+    <div class="col-xs-12 col-md-6">
+        <mat-form-field class="w-100">
+          <textarea readonly matInput placeholder="stdout" style="min-height: 150px; resize: none" [value] = "stdoutText"></textarea>
+        </mat-form-field>
+      </div>
+  </div>
+</div>
