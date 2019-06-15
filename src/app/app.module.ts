@@ -25,6 +25,7 @@ import { ShareComponent } from './subview/share.component';
     CodemirrorModule,
     FormsModule,
     HttpClientModule,
+
     BrowserAnimationsModule, MatFormFieldModule,
     MatSelectModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatBottomSheetModule, MatListModule,
     FontAwesomeModule

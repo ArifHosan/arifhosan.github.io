@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  baseUrl: 'http://localhost:4200/',
   restApi: 'https://per86r2mvj.execute-api.ap-southeast-1.amazonaws.com/dev/api/',
   judgeApi: 'https://api.judge0.com/'
 };

@@ -1,3 +1,4 @@
+import { environment } from './../../environments/environment';
 import { Component, OnInit, ViewChild, ElementRef, AfterViewInit, ViewChildren, Input } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import 'codemirror/mode/javascript/javascript';
@@ -5,13 +6,16 @@ import 'codemirror/mode/markdown/markdown';
 import 'codemirror/addon/edit/closebrackets';
 import 'codemirror/addon/edit/matchbrackets';
 import 'codemirror/addon/mode/loadmode';
+import { ClipboardService } from 'ngx-clipboard'
 import { LanguageService } from '../core/api/language.service';
 import { RunnerService } from '../core/api/runner.service';
 
 
-import {faCopy, faShareSquare} from '@fortawesome/free-regular-svg-icons';
+import { faCopy, faShareSquare } from '@fortawesome/free-regular-svg-icons';
 import { MatSnackBar, MatBottomSheet } from '@angular/material';
 import { ShareComponent } from '../subview/share.component';
+import { SnippetService } from '../core/api/snippet.service';
+import { ActivatedRoute } from '@angular/router';
 
 
 declare var CodeMirror: any;
@@ -24,47 +28,75 @@ declare var CodeMirror: any;
 export class HomeComponent implements OnInit, AfterViewInit {
   @ViewChildren('codeBox') ref: any;
   private readonly modeUrl = '/assets/codemirror/mode/%N/%N.js'
-  public content: string = "";
+  public content = '';
   public options: any = { lineNumbers: true, readOnly: false, theme: 'material', mode: 'null', matchBrackets: true, autoCloseBrackets: true, };
   private mode: string = null;
   public currentLanguage: Language;
-  public stdoutText: String = "";
-  public stdinText: String = "";
+  public stdoutText: string = '';
+  public stdinText: string = '';
   public statusProperties: {
     hidden: boolean,
     status: {
-      class: String,
-      text: String
+      class: string,
+      text: string
     },
     time: {
-      text: String,
+      text: string,
       hidden: boolean
     }
-  }
+  };
+  public linkShared = {
+    shared: false,
+    snippet: null
+  };
   public isRunning = false;
 
   public languageList: Language[];
 
-  public shareableUrl: String = "";
+  public shareableUrl: string = '';
 
   public fontAwesome = {
     faCopy: faCopy,
     faShareSquare: faShareSquare
   }
 
-  constructor(public languageService: LanguageService, public runnerService: RunnerService, private _snackBar: MatSnackBar, private _bottomSheet: MatBottomSheet) {
+  public isDetailed = false;
+
+  constructor(public languageService: LanguageService,
+              public runnerService: RunnerService,
+// tslint:disable-next-line: variable-name
+              private _snackBar: MatSnackBar,
+// tslint:disable-next-line: variable-name
+              private _bottomSheet: MatBottomSheet,
+              public snippetService: SnippetService,
+              private _clipboardService: ClipboardService,
+              public route: ActivatedRoute) {
     CodeMirror.modeURL = this.modeUrl;
     this.statusProperties = {
       hidden: true,
       status: {
-        class: "",
-        text: "",
+        class: '',
+        text: '',
       },
       time: {
-        text: "",
+        text: '',
         hidden: true
       }
     }
+
+    const keyId = route.snapshot.params.keyId;
+    if(keyId) {
+      console.log(keyId);
+      this.isDetailed = true;
+      this.snippetService.getSnippet(keyId).subscribe(res => {
+        if(res.length <= 0) { return; }
+        res = res[0];
+        console.log(res);
+        this.content = res.code;
+        this.stdinText = res.stdin;
+      });
+    }
+
   }
 
   ngOnInit() {
@@ -79,7 +111,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   changeCodeLanguage(event) {
     this.currentLanguage = this.languageList.filter(x => x._id == event.value)[0];
     const name = this.currentLanguage.file_name;
-    const detectedMode = CodeMirror.findModeByFileName(name + ".js");
+    const detectedMode = CodeMirror.findModeByFileName(name + '.js');
     // const detectedMode = CodeMirror.findModeByMIME("text/x-csrc");
     if (detectedMode) {
       this.mode = detectedMode.mode;
@@ -89,7 +121,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   onRun() {
-    if(this.content.length <= 0) {
+    if (this.content.length <= 0) {
       return;
     }
     const data = {
@@ -100,23 +132,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.isRunning = true;
 
     this.statusProperties.hidden = false;
-    this.statusProperties.status.class = "text-warning";
-    this.statusProperties.status.text = "Compiling.....";
+    this.statusProperties.status.class = 'text-warning';
+    this.statusProperties.status.text = 'Compiling.....';
 
     this.statusProperties.time.hidden = true;
-    this.statusProperties.time.text = "";
+    this.statusProperties.time.text = '';
 
     this.runnerService.submitCode(data).subscribe(token => {
       console.log(token);
       setTimeout(() => {
-        this.getSubmissionInfo(token["token"]);
+        this.getSubmissionInfo(token['token']);
       }, 1000);
     });
   }
 
   getSubmissionInfo(token) {
-    this.statusProperties.status.class = "text-info";
-    this.statusProperties.status.text = "Running.....";
+    this.statusProperties.status.class = 'text-info';
+    this.statusProperties.status.text = 'Running.....';
 
     this.runnerService.getSubmission(token).subscribe(res => {
       console.log(res);
@@ -135,21 +167,22 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     switch (result.status.id) {
       case 3:
-        this.statusProperties.status.class = "text-success";
-        this.statusProperties.status.text = "Success";
+        this.statusProperties.status.class = 'text-success';
+        this.statusProperties.status.text = 'Success';
 
         this.statusProperties.time.hidden = false;
-        this.statusProperties.time.text = result.time + "s";
+        this.statusProperties.time.text = result.time + 's';
 
         this.stdoutText = result.stdout;
+
         break;
       default:
-          this.statusProperties.status.class = "text-danger";
-          this.statusProperties.status.text = result.status.description;
+        this.statusProperties.status.class = 'text-danger';
+        this.statusProperties.status.text = result.status.description;
 
-          this.statusProperties.time.hidden = true;
+        this.statusProperties.time.hidden = true;
 
-          this.stdoutText = result.compile_output ? result.compile_output: result.stderr;
+        this.stdoutText = result.compile_output ? result.compile_output : result.stderr;
     }
   }
 
@@ -160,12 +193,26 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   doCopy() {
-    this.openSnackBar("Text Copied", "Dismiss");
+    this._clipboardService.copyFromContent(this.linkShared.snippet.url);
+    this.openSnackBar('Text Copied', 'Dismiss');
   }
 
   openShareBottomSheet() {
     this._bottomSheet.open(ShareComponent, {
       data: { url: this.shareableUrl },
+    });
+  }
+
+  createShareLink() {
+    const snippet: Snippet = {
+      code: this.content,
+      stdin: this.stdinText,
+      language: this.currentLanguage
+    }
+    this.snippetService.generateSnippet(snippet).subscribe(res => {
+      this.linkShared.shared = true;
+      this.linkShared.snippet = res;
+      this.linkShared.snippet.url = environment.baseUrl + res.url;
     });
   }
 
