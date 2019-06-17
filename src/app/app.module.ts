@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import { ShareComponent } from './subview/share.component';
 
+import { CookieService } from 'ngx-cookie-service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -28,9 +30,9 @@ import { ShareComponent } from './subview/share.component';
 
     BrowserAnimationsModule, MatFormFieldModule,
     MatSelectModule, MatButtonModule, MatInputModule, MatSnackBarModule, MatBottomSheetModule, MatListModule,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
-  providers: [],
+  providers: [CookieService],
   entryComponents: [ShareComponent],
   bootstrap: [AppComponent]
 })

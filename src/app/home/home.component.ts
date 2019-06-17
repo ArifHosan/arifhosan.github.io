@@ -17,6 +17,8 @@ import { ShareComponent } from '../subview/share.component';
 import { SnippetService } from '../core/api/snippet.service';
 import { ActivatedRoute } from '@angular/router';
 
+import { UUID } from 'angular2-uuid';
+import { CookieService } from 'ngx-cookie-service';
 
 declare var CodeMirror: any;
 
@@ -61,6 +63,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
   }
 
   public isDetailed = false;
+  public existingSnippet = null;
+  public isOwner = false;
+  public uuid: string;
 
   constructor(public languageService: LanguageService,
               public runnerService: RunnerService,
@@ -70,7 +75,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
               private _bottomSheet: MatBottomSheet,
               public snippetService: SnippetService,
               private _clipboardService: ClipboardService,
-              public route: ActivatedRoute) {
+              public route: ActivatedRoute,
+              private cookieService: CookieService) {
     CodeMirror.modeURL = this.modeUrl;
     this.statusProperties = {
       hidden: true,
@@ -84,6 +90,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
       }
     }
 
+    this.uuid = this.cookieService.get('randid');
+    if(!this.uuid) {
+      this.uuid = UUID.UUID();
+      this.cookieService.set('randid', this.uuid);
+    }
+
     const keyId = route.snapshot.params.keyId;
     if(keyId) {
       console.log(keyId);
@@ -91,9 +103,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.snippetService.getSnippet(keyId).subscribe(res => {
         if(res.length <= 0) { return; }
         res = res[0];
-        console.log(res);
+        this.existingSnippet = res;
         this.content = res.code;
         this.stdinText = res.stdin;
+        this.isOwner = this.uuid == res.uuid;
       });
     }
 

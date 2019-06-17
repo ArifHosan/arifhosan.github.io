@@ -25,7 +25,7 @@
     <div class="col-xs-2 col-md-2">
       <button mat-raised-button class="btn btn-success w-100 mt-2" (click)="onRun()" [disabled]="isRunning || content.length == 0 || !currentLanguage">Run</button>
     </div>
-    <div class="col-xs-6 col-sm-6 offset-md-1 mt-3 mt-md-0">
+    <div class="col-xs-6 col-sm-6 offset-md-1 mt-3 mt-md-0" *ngIf="!isOwner">
       <div *ngIf="linkShared.shared">
           <mat-form-field class="" style="width: 80% !important">
               <input matInput readonly="true" type="text" [value]="linkShared.snippet.url">
@@ -34,6 +34,16 @@
           <div class="float-right mt-2" style="width: 10% !important; font-size: 20px;" data-toggle="tooltip" data-placement="top" title="Share to Social Sites" (click)="openShareBottomSheet()"><fa-icon [icon]="fontAwesome.faShareSquare"></fa-icon></div>
       </div>
       <button *ngIf="!linkShared.shared" (click)="createShareLink()" mat-raised-button class="btn btn-primary w-100 mt-2" [disabled]="content.length == 0 || !currentLanguage">Save to Share</button>
+    </div>
+    <div class="col-xs-6 col-sm-6 offset-md-1 mt-3 mt-md-0" *ngIf="isOwner">
+        <div>
+            <mat-form-field class="" style="width: 80% !important">
+                <input matInput readonly="true" type="text" [value]="linkShared.snippet.url">
+            </mat-form-field>
+            <div class="float-right mt-2" style="width: 10% !important; font-size: 20px;" data-toggle="tooltip" data-placement="top" title="Copy to Clipboard" (click)="doCopy()"><fa-icon [icon]="fontAwesome.faCopy"></fa-icon></div>
+            <div class="float-right mt-2" style="width: 10% !important; font-size: 20px;" data-toggle="tooltip" data-placement="top" title="Share to Social Sites" (click)="openShareBottomSheet()"><fa-icon [icon]="fontAwesome.faShareSquare"></fa-icon></div>
+        </div>
+        <button (click)="createShareLink()" mat-raised-button class="btn btn-primary w-100 mt-2" [disabled]="content.length == 0 || !currentLanguage">Save to Share</button>
     </div>
   </div>
   <div class="row mt-2">
