@@ -101,7 +101,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
     const keyId = route.snapshot.params.keyId;
     if(keyId) {
-      console.log(keyId);
+      // console.log(keyId);
       this.isDetailed = true;
       this.snippetService.getSnippet(keyId).subscribe(res => {
         if(res.length <= 0) { return; }
@@ -156,8 +156,8 @@ export class HomeComponent implements OnInit, AfterViewInit {
     }
     const data = {
       language_id: this.currentLanguage.language_name,
-      source_code: this.content,
-      stdin: this.stdinText
+      source_code: this.escapeAndEncodeString(this.content),
+      stdin: this.escapeAndEncodeString(this.stdinText)
     };
     this.isRunning = true;
 
@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.statusProperties.time.text = '';
 
     this.runnerService.submitCode(data).subscribe(token => {
-      console.log(token);
+      // console.log(token);
       setTimeout(() => {
         this.getSubmissionInfo(token['token']);
       }, 1000);
@@ -181,7 +181,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.statusProperties.status.text = 'Running.....';
 
     this.runnerService.getSubmission(token).subscribe(res => {
-      console.log(res);
+      // console.log(res);
       this.processResponse(res);
     });
   }
@@ -254,6 +254,12 @@ export class HomeComponent implements OnInit, AfterViewInit {
     this.existingSnippet.language = this.currentLanguage;
     this.existingSnippet.url = this.existingSnippet.url.split('/').slice(-1).toString();
     this.snippetService.updateSnippet(this.existingSnippet._id, this.existingSnippet).subscribe(res=>{console.log(res)});
+  }
+
+  escapeAndEncodeString(data) {;
+    // const newData = JSON.stringify(data).slice(1, -1);
+    const ret = btoa(data);
+    return ret;
   }
 
 
