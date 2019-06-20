@@ -29,4 +29,5 @@ interface Snippet {
   code: string;
   stdin: string;
   language: Language;
+  uuid: string;
 }

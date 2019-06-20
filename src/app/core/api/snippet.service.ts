@@ -10,10 +10,14 @@ export class SnippetService {
   constructor(public http: HttpClient) { }
 
   generateSnippet(data) {
-    return this.http.post<any>(this.BASE_URL + 'snippets/', data);
+    return this.http.post<Snippet>(this.BASE_URL + 'snippets/', data);
   }
 
   getSnippet(id) {
-    return this.http.get<any>(this.BASE_URL + 'snippets/' + id);
+    return this.http.get<Snippet[]>(this.BASE_URL + 'snippets/' + id);
+  }
+
+  updateSnippet(id, data) {
+    return this.http.put<Snippet>(this.BASE_URL + 'snippets/' + id, data);
   }
 }

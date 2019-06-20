@@ -15,7 +15,7 @@ import { faCopy, faShareSquare } from '@fortawesome/free-regular-svg-icons';
 import { MatSnackBar, MatBottomSheet } from '@angular/material';
 import { ShareComponent } from '../subview/share.component';
 import { SnippetService } from '../core/api/snippet.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { UUID } from 'angular2-uuid';
 import { CookieService } from 'ngx-cookie-service';
@@ -36,6 +36,7 @@ export class HomeComponent implements OnInit, AfterViewInit {
   public currentLanguage: Language;
   public stdoutText: string = '';
   public stdinText: string = '';
+  public matLanguageSelect = '';
   public statusProperties: {
     hidden: boolean,
     status: {
@@ -76,7 +77,9 @@ export class HomeComponent implements OnInit, AfterViewInit {
               public snippetService: SnippetService,
               private _clipboardService: ClipboardService,
               public route: ActivatedRoute,
-              private cookieService: CookieService) {
+              public router: Router,
+              private cookieService: CookieService,
+              ) {
     CodeMirror.modeURL = this.modeUrl;
     this.statusProperties = {
       hidden: true,
@@ -102,11 +105,21 @@ export class HomeComponent implements OnInit, AfterViewInit {
       this.isDetailed = true;
       this.snippetService.getSnippet(keyId).subscribe(res => {
         if(res.length <= 0) { return; }
-        res = res[0];
-        this.existingSnippet = res;
-        this.content = res.code;
-        this.stdinText = res.stdin;
-        this.isOwner = this.uuid == res.uuid;
+        const data = res[0];
+        this.existingSnippet = data;
+        this.content = data.code;
+        this.stdinText = data.stdin;
+        this.isOwner = this.uuid == data.uuid;
+        this.matLanguageSelect = data.language._id;
+
+        this.currentLanguage = data.language;
+        this.changeLanguageStyle();
+
+        if(this.isOwner) {
+          this.linkShared.shared = true;
+          this.linkShared.snippet = data;
+          this.linkShared.snippet.url = environment.baseUrl + data.url;
+        }
       });
     }
 
@@ -123,6 +136,10 @@ export class HomeComponent implements OnInit, AfterViewInit {
 
   changeCodeLanguage(event) {
     this.currentLanguage = this.languageList.filter(x => x._id == event.value)[0];
+    this.changeLanguageStyle();
+  }
+
+  changeLanguageStyle() {
     const name = this.currentLanguage.file_name;
     const detectedMode = CodeMirror.findModeByFileName(name + '.js');
     // const detectedMode = CodeMirror.findModeByMIME("text/x-csrc");
@@ -220,13 +237,23 @@ export class HomeComponent implements OnInit, AfterViewInit {
     const snippet: Snippet = {
       code: this.content,
       stdin: this.stdinText,
-      language: this.currentLanguage
-    }
+      language: this.currentLanguage,
+      uuid: this.uuid
+    };
     this.snippetService.generateSnippet(snippet).subscribe(res => {
+      this.router.navigateByUrl('/' + res.url);
       this.linkShared.shared = true;
       this.linkShared.snippet = res;
       this.linkShared.snippet.url = environment.baseUrl + res.url;
     });
+  }
+
+  updateShareLink() {
+    this.existingSnippet.code = this.content;
+    this.existingSnippet.stdin = this.stdinText;
+    this.existingSnippet.language = this.currentLanguage;
+    this.existingSnippet.url = this.existingSnippet.url.split('/').slice(-1).toString();
+    this.snippetService.updateSnippet(this.existingSnippet._id, this.existingSnippet).subscribe(res=>{console.log(res)});
   }
 
 

@@ -9,7 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "postbuild": "gulp compress"
+    "postbuild": "gulp compress",
+    "deploy": "npx angular-cli-ghpages --dir=dist/compiler --cname=ide.arifhosan.com --no-silent"
   },
   "private": true,
   "dependencies": {

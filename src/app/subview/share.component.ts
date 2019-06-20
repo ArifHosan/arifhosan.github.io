@@ -12,5 +12,8 @@ export class ShareComponent implements OnInit {
 
   ngOnInit() {
   }
+  openLink(event) {
+
+  }
 
 }
