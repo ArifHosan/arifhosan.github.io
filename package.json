@@ -10,7 +10,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postbuild": "gulp compress",
-    "deploy": "ngh --dir=dist/compiler --cname=ide.arifhosan.com --no-silent"
+    "deploy": "ngh --dir=dist/compiler --cname=web-ide.arifhosan.com --no-silent"
   },
   "private": true,
   "dependencies": {
