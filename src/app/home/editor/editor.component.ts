@@ -7,6 +7,6 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent {
-  editorOptions = {theme: 'vs-dark', language: 'javascript'};
+  editorOptions = {theme: 'vs-dark', language: 'javascript', scrollBeyondLastLine: false};
   code: string= 'function x() {\nconsole.log("Hello world!");\n}';
 }

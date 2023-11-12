@@ -8,12 +8,14 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { EditorComponent } from './home/editor/editor.component';
+import { HeaderComponent } from './layout/header/header.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
-    EditorComponent
+    EditorComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,
