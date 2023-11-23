@@ -1,7 +1,31 @@
 <div class="row">
     <div class="col-md-9">
         <div class="card">
-            <app-editor></app-editor>
+            <app-editor #editor></app-editor>
         </div>
     </div>
-</div>
+    <div class="col-md-3">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Run Code</h5>
+                <select class="form-select mt-2 mb-3" [(ngModel)]="selectedLanguage">
+                    <option *ngFor="let language of languages" [value]="language.id">{{ language.name }}</option>
+                </select>
+                <button class="btn btn-success w-100" (click)="onRun()">
+                    <ng-icon name="jamMagic"></ng-icon> Run
+                </button>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Input (optional)</h5>
+                <textarea class="form-control" rows="5" [(ngModel)]="input"></textarea>
+            </div>
+        </div>
+        <div class="card mt-3">
+            <div class="card-body">
+                <h5 class="card-title">Output</h5>
+                <textarea readonly class="form-control" rows="5" [(ngModel)]="output"></textarea>
+            </div>
+        </div>
+    </div>

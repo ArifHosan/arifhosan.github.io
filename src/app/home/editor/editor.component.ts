@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
 
 @Component({
   selector: 'app-editor',
@@ -7,6 +6,10 @@ import { MonacoEditorModule } from 'ngx-monaco-editor-v2';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent {
-  editorOptions = {theme: 'vs-dark', language: 'javascript', scrollBeyondLastLine: false};
-  code: string= 'function x() {\nconsole.log("Hello world!");\n}';
+  editorOptions = { theme: 'vs-dark', language: 'javascript', scrollBeyondLastLine: false };
+  code: string = 'function x() {\nconsole.log("Hello world!");\n}';
+
+  getCode() {
+    return this.code;
+  }
 }
