@@ -30,3 +30,12 @@ interface Snippet {
     language: Language;
     uuid: string;
 }
+
+
+export enum CodeStatus {
+    NOT_STARTED,
+    RUNNING,
+    SUCCESS,
+    COMPILE_ERROR,
+    RUNTIME_ERROR,
+}

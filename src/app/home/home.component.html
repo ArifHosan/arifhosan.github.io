@@ -1,14 +1,15 @@
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-8">
         <div class="card">
             <app-editor #editor></app-editor>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-4">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Run Code</h5>
-                <select class="form-select mt-2 mb-3" [(ngModel)]="selectedLanguage">
+                <select class="form-select mt-2 mb-3" [(ngModel)]="selectedLanguage"
+                    (change)="updateCodeLanguage($event)">
                     <option *ngFor="let language of languages" [value]="language.id">{{ language.name }}</option>
                 </select>
                 <button class="btn btn-success w-100" (click)="onRun()">
@@ -24,8 +25,30 @@
         </div>
         <div class="card mt-3">
             <div class="card-body">
-                <h5 class="card-title">Output</h5>
+                <div class="card-title d-flex justify-content-between">
+                    <h5>Output</h5>
+                    <div class="d-flex" *ngIf="codeStatus === CodeStatus().RUNNING">
+                        <div class="spinner-border ms-3" role="status" aria-hidden="true"></div>
+                        <h5 class="ms-3 text-secondary">Compiling Code..</h5>
+                    </div>
+                    <div class="d-flex ms-3 me-3" *ngIf="codeStatus === CodeStatus().COMPILE_ERROR">
+                        <ng-icon class="text-danger" name="remixCloseCircleFill"></ng-icon>
+                        <h5 class="ms-1 text-danger">Compilation Error</h5>
+                    </div>
+                    <div class="d-flex ms-3 me-3" *ngIf="codeStatus === CodeStatus().RUNTIME_ERROR">
+                        <ng-icon class="text-danger" name="remixCloseCircleFill"></ng-icon>
+                        <h5 class="ms-1 text-danger">Runtime Error</h5>
+                    </div>
+                    <div class="d-flex ms-3 me-3" *ngIf="codeStatus === CodeStatus().SUCCESS">
+                        <ng-icon class="text-success" name="remixCheckFill"></ng-icon>
+                        <h5 class="ms-1 text-success">Success</h5>
+                    </div>
+                </div>
                 <textarea readonly class="form-control" rows="5" [(ngModel)]="output"></textarea>
+                <div class="d-flex justify-content-between">
+                    <p class="text-dark">Time Taken: </p>
+                    <p class="text-dark">Memory Used: </p>
+                </div>
             </div>
         </div>
     </div>

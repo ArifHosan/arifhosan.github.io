@@ -13,6 +13,7 @@ import { HeaderComponent } from './layout/header/header.component';
 import { HttpClientModule } from '@angular/common/http';
 import { NgIconsModule } from '@ng-icons/core';
 import { jamEgg, jamMagic } from '@ng-icons/jam-icons';
+import { remixCloseFill, remixCloseCircleFill, remixCheckFill  } from '@ng-icons/remixicon';
 import { ProgramService } from './services/program.service';
 
 @NgModule({
@@ -28,7 +29,7 @@ import { ProgramService } from './services/program.service';
     AppRoutingModule,
     NgbModule,
     FormsModule,
-    NgIconsModule.withIcons({ jamEgg, jamMagic }),
+    NgIconsModule.withIcons({ jamEgg, jamMagic, remixCloseFill, remixCloseCircleFill, remixCheckFill }),
     MonacoEditorModule.forRoot()
   ],
   providers: [
